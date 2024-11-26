@@ -20,7 +20,7 @@ function App() {
   useEffect(() => {
     const dataFetcher = async () => {
       const pokimonsData = await fetchPokimonsData();
-      setPokimons(pokimonsData);
+      setPokimons([...pokimonsData]);
       console.log(pokimons);
     };
 
@@ -30,14 +30,14 @@ function App() {
   async function fetchPokimonsData() {
     const pokimonsSet = new Set();
 
-    pokemonNamesToFetch.forEach(async (pokimonName) => {
+    for (let pokimonName of pokemonNamesToFetch) {
       try {
         const pokimon = await fetchPokimonData(pokimonName);
         pokimonsSet.add(pokimon);
       } catch (error) {
         console.error("Pokimon not found", error);
       }
-    });
+    }
 
     return pokimonsSet;
   }
