@@ -17,6 +17,8 @@ function Pokimons() {
   ];
 
   const [pokimons, setPokimons] = useState([]);
+  const [score, setScore] = useState(0);
+  const [bestScore, setBestScore] = useState(0);
 
   useEffect(() => {
     const dataFetcher = async () => {
@@ -59,6 +61,7 @@ function Pokimons() {
         key: crypto.randomUUID(),
         name: data.name,
         imgUrl: data.sprites.front_default,
+        isClicked: false,
       };
 
       return pokimon;
@@ -67,12 +70,70 @@ function Pokimons() {
     }
   }
 
+  function onPokimonclicked(key) {
+    const clickedPokimon = pokimons.find((pokimon) => pokimon.key === key);
+
+    if (clickedPokimon.isClicked) {
+      if (score > bestScore) {
+        setBestScore(score);
+      }
+      setScore(0);
+      console.log("You lose!");
+      const resetPokimons = pokimons.map((pokimon) => {
+        pokimon.isClicked = false;
+        return pokimon;
+      });
+      setPokimons(resetPokimons);
+    } else {
+      const modifiedPokimons = pokimons.map((pokimon) => {
+        if (pokimon.key === key) {
+          pokimon.isClicked = true;
+        }
+
+        return pokimon;
+      });
+
+      setPokimons(modifiedPokimons);
+      setScore((pre) => pre + 1);
+    }
+
+    shuffelPokimons();
+    console.log(score);
+    console.log(bestScore);
+  }
+
+  function shuffelPokimons() {
+    const pok = [...pokimons];
+
+    // Start from the last element and swap each element with a random element before it
+    for (let i = pok.length - 1; i > 0; i--) {
+      const randomIndex = Math.floor(Math.random() * (i + 1)); // Get a random index between 0 and i
+      [pok[i], pok[randomIndex]] = [pok[randomIndex], pok[i]]; // Swap the elements
+    }
+
+    setPokimons(pok);
+    console.log(pok);
+  }
+
   return (
-    <div className="pokimons">
-      {pokimons.map((pokimon) => {
-        return <Pokimon pokimon={pokimon} key={pokimon.key}></Pokimon>;
-      })}
-    </div>
+    <>
+      <div className="pokimons">
+        {pokimons.map((pokimon) => {
+          return (
+            <Pokimon
+              pokimon={pokimon}
+              key={pokimon.key}
+              onClick={(key) => onPokimonclicked(key)}
+            ></Pokimon>
+          );
+        })}
+      </div>
+
+      <div className="scoreArea">
+        <div className="score">Score: {score}</div>
+        <div className="bestScore">Best score: {bestScore}</div>
+      </div>
+    </>
   );
 }
 

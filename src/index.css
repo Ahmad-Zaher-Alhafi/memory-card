@@ -10,5 +10,10 @@ body {
   min-height: 100vh;
 
   display: flex;
+}
+
+.scoreArea {
+  display: flex;
   flex-direction: column;
+  gap: 10px;
 }
